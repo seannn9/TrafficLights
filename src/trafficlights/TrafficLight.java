@@ -39,7 +39,7 @@ public class TrafficLight {
 	
 	// method for the panel
 	public void Panel() {
-		panel.setBackground(Color.WHITE);
+		panel.setBackground(Color.GRAY);
 		panel.setBounds(10,10, 365, 100);
 		panel.add(label);
 	}
@@ -48,28 +48,32 @@ public class TrafficLight {
 	public void Label() {
 		label.setText("" + time);
 		label.setFont(font);
-		label.setBackground(Color.WHITE);
+		label.setForeground(Color.BLACK);
 	}
 	
 	// class timer event to simulate the alternating colors of traffic lights depending on the timer
 	public class TimerEvent implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			Color def = Color.DARK_GRAY;
+			Color go = Color.GREEN;
+			Color stop = Color.RED;
+			Color ready = Color.YELLOW;
 			time--;
 			label.setText("" + time);
 			if (time == 5 && shape.getColorA() == Color.GREEN) {
-				shape.setColor1(Color.GRAY, Color.YELLOW, Color.GRAY);
+				shape.setColor1(def, ready, def);
 			} 
 			if (time == 5 && shape.getColorX() == Color.GREEN) {
-				shape.setColor2(Color.GRAY, Color.YELLOW, Color.GRAY);
+				shape.setColor2(def, ready, def);
 			}
 			if (time == 0) {
 				if (cycle) {
-					shape.setColor1(Color.GRAY, Color.GRAY, Color.GREEN);
-					shape.setColor2(Color.RED, Color.GRAY, Color.GRAY);
+					shape.setColor1(def, def, go);
+					shape.setColor2(stop, def, def);
 					cycle = false;
 				} else {
-					shape.setColor1(Color.RED, Color.GRAY, Color.GRAY);
-					shape.setColor2(Color.GRAY, Color.GRAY, Color.GREEN);
+					shape.setColor1(stop, def, def);
+					shape.setColor2(def, def, go);
 					cycle = true;
 				} time = 20;
 			}
@@ -80,12 +84,12 @@ public class TrafficLight {
 	// class for the shapes/circles that displays the colors
 	@SuppressWarnings("serial")
 	public class Shapes extends JComponent {
-		Color A = Color.gray;
-		Color B = Color.gray;
+		Color A = Color.DARK_GRAY;
+		Color B = Color.DARK_GRAY;
 		Color C = Color.GREEN;
 		Color X = Color.RED;
-		Color Y = Color.gray;
-		Color Z = Color.gray;
+		Color Y = Color.DARK_GRAY;
+		Color Z = Color.DARK_GRAY;
 		int h = 150, w = 150;
 		public void paintComponent(Graphics g) {
 			// Column 1 circles
