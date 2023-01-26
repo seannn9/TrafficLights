@@ -1,5 +1,5 @@
 package trafficlights;
-
+// Traffic Light program that simulates how a traffic light functions based on a timer
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,7 +9,7 @@ public class TrafficLight {
 	JFrame frame = new JFrame();
 	JPanel panel = new JPanel();
 	JLabel label = new JLabel();
-	Timer timer = new Timer(500, new TimerEvent());
+	Timer timer = new Timer(1000, new TimerEvent());
 	Shapes shape = new Shapes();
 	Font font = new Font("Tahoma", Font.BOLD, 70);
 	int time = 20;
@@ -56,7 +56,7 @@ public class TrafficLight {
 		public void actionPerformed(ActionEvent e) {
 			time--;
 			label.setText("" + time);
-			if (time == 5 && shape.getA() == Color.GREEN) {
+			if (time == 5 && shape.getColorA() == Color.GREEN) {
 				shape.setColor1(Color.GRAY, Color.YELLOW, Color.GRAY);
 			} 
 			if (time == 5 && shape.getColorX() == Color.GREEN) {
@@ -119,7 +119,7 @@ public class TrafficLight {
 		}
 		
 		// getter for the first circle in column 1
-		public Color getA() {
+		public Color getColorA() {
 			return A;
 		}
 		
