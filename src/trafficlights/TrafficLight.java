@@ -64,12 +64,12 @@ public class TrafficLight {
 			}
 			if (time == 0) {
 				if (cycle) {
-					shape.setColor1(Color.GREEN, Color.GRAY, Color.GRAY);
-					shape.setColor2(Color.GRAY, Color.GRAY, Color.RED);
+					shape.setColor1(Color.GRAY, Color.GRAY, Color.GREEN);
+					shape.setColor2(Color.RED, Color.GRAY, Color.GRAY);
 					cycle = false;
 				} else {
-					shape.setColor1(Color.GRAY, Color.GRAY, Color.RED);
-					shape.setColor2(Color.GREEN, Color.GRAY, Color.GRAY);
+					shape.setColor1(Color.RED, Color.GRAY, Color.GRAY);
+					shape.setColor2(Color.GRAY, Color.GRAY, Color.GREEN);
 					cycle = true;
 				} time = 20;
 			}
@@ -80,12 +80,12 @@ public class TrafficLight {
 	// class for the shapes/circles that displays the colors
 	@SuppressWarnings("serial")
 	public class Shapes extends JComponent {
-		Color A = Color.GREEN;
+		Color A = Color.gray;
 		Color B = Color.gray;
-		Color C = Color.gray;
-		Color X = Color.gray;
+		Color C = Color.GREEN;
+		Color X = Color.RED;
 		Color Y = Color.gray;
-		Color Z = Color.RED;
+		Color Z = Color.gray;
 		int h = 150, w = 150;
 		public void paintComponent(Graphics g) {
 			// Column 1 circles
@@ -118,14 +118,14 @@ public class TrafficLight {
 			this.Z = Z;
 		}
 		
-		// getter for the first circle in column 1
+		// getter for the third circle in column 1
 		public Color getColorA() {
-			return A;
+			return C;
 		}
 		
-		// getter for the first circle in column 2
+		// getter for the third circle in column 2
 		public Color getColorX() {
-			return X;
+			return Z;
 		}
 	}
 }
