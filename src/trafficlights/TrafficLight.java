@@ -1,5 +1,5 @@
 package trafficlights;
-// Traffic Light program that simulates how a traffic light functions based on a timer
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,6 +7,7 @@ import javax.swing.*;
 
 public class TrafficLight {
 	JFrame frame = new JFrame();
+	JButton button = new JButton();
 	JPanel panel = new JPanel();
 	JLabel label = new JLabel();
 	Timer timer = new Timer(1000, new TimerEvent());
@@ -14,10 +15,12 @@ public class TrafficLight {
 	Font font = new Font("Tahoma", Font.BOLD, 70);
 	int time = 20;
 	boolean cycle = false;
+	boolean run = false;
 	
 	// constructor that initializes the contents in the main class
 	TrafficLight() {
 		Frame();
+		Button();
 		Panel();
 		Label();
 		timer.start();
@@ -25,16 +28,28 @@ public class TrafficLight {
 	
 	// method for the frame or the whole window
 	public void Frame() {
-		frame.setSize(400, 640);
+		frame.setSize(400, 700); // 400, 640
 		frame.setLocation(600, 200);
 		frame.setTitle("Traffic Light Simulation");
 		frame.setVisible(true);
 		frame.setResizable(false);
 		frame.getContentPane().setBackground(Color.BLACK);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.add(button);
 		frame.add(panel);
 		frame.add(label);
 		frame.add(shape);
+	}
+
+	// method for stop button
+	public void Button() {
+		button.setSize(100,  50);
+		button.setText("STOP");
+		button.setFont(new Font("Tahoma", Font.BOLD, 20));
+		button.setLocation(140, 600);
+		button.setForeground(Color.RED);
+		button.setHorizontalAlignment(SwingConstants.CENTER);
+		button.addActionListener(new ButtonEvent());
 	}
 	
 	// method for the panel
@@ -78,6 +93,23 @@ public class TrafficLight {
 				} time = 20;
 			}
 			shape.repaint();
+		}
+	}
+	
+	// class for the button event that stop/start the timer
+	public class ButtonEvent implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			if (run) {
+				button.setText("STOP");
+				button.setForeground(Color.RED);
+				timer.start();
+				run = false;
+			} else {
+				button.setText("START");
+				button.setForeground(Color.GREEN);
+				timer.stop();
+				run = true;
+			}
 		}
 	}
 	
