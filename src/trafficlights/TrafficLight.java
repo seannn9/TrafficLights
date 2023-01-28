@@ -8,11 +8,14 @@ import javax.swing.*;
 public class TrafficLight {
 	JFrame frame = new JFrame();
 	JButton button = new JButton();
+	JButton addTimeButton = new JButton();
+	JButton subTimeButton = new JButton();
 	JPanel panel = new JPanel();
 	JLabel label = new JLabel();
-	Timer timer = new Timer(1000, new TimerEvent());
+	Timer timer = new Timer(500, new TimerEvent());
 	Shapes shape = new Shapes();
 	Font font = new Font("Tahoma", Font.BOLD, 70);
+	Font buttonFont = new Font("Tahoma", Font.BOLD, 20);
 	int time = 20;
 	boolean cycle = false;
 	boolean run = false;
@@ -36,6 +39,8 @@ public class TrafficLight {
 		frame.getContentPane().setBackground(Color.BLACK);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(button);
+		frame.add(addTimeButton);
+		frame.add(subTimeButton);
 		frame.add(panel);
 		frame.add(label);
 		frame.add(shape);
@@ -45,11 +50,29 @@ public class TrafficLight {
 	public void Button() {
 		button.setSize(100,  50);
 		button.setText("STOP");
-		button.setFont(new Font("Tahoma", Font.BOLD, 20));
+		button.setFont(buttonFont);
 		button.setLocation(140, 600);
 		button.setForeground(Color.RED);
 		button.setHorizontalAlignment(SwingConstants.CENTER);
-		button.addActionListener(new ButtonEvent());
+		button.addActionListener(new StopButtonEvent());
+		// add time button
+		addTimeButton.setSize(50, 25);
+		addTimeButton.setText("+");
+		addTimeButton.setFont(buttonFont);
+		addTimeButton.setLocation(15, 615);
+		addTimeButton.setForeground(Color.GREEN);
+		addTimeButton.setBackground(Color.DARK_GRAY);
+		addTimeButton.setHorizontalAlignment(SwingConstants.CENTER);
+		addTimeButton.addActionListener(new AddTimeButtonEvent());
+		// subtract time button
+		subTimeButton.setSize(50, 25);
+		subTimeButton.setText("-");
+		subTimeButton.setFont(buttonFont);
+		subTimeButton.setLocation(70, 615);
+		subTimeButton.setForeground(Color.RED);
+		subTimeButton.setBackground(Color.DARK_GRAY);
+		subTimeButton.setHorizontalAlignment(SwingConstants.CENTER);
+		subTimeButton.addActionListener(new SubTimeButtonEvent());	
 	}
 	
 	// method for the panel
@@ -68,6 +91,7 @@ public class TrafficLight {
 	
 	// class timer event to simulate the alternating colors of traffic lights depending on the timer
 	public class TimerEvent implements ActionListener {
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			Color def = Color.DARK_GRAY;
 			Color go = Color.GREEN;
@@ -97,7 +121,8 @@ public class TrafficLight {
 	}
 	
 	// class for the button event that stop/start the timer
-	public class ButtonEvent implements ActionListener {
+	public class StopButtonEvent implements ActionListener {
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (run) {
 				button.setText("STOP");
@@ -112,4 +137,30 @@ public class TrafficLight {
 			}
 		}
 	}
-}
+	
+	// add 5 seconds increment to timer for the current count-down cycle (doesn't apply to the next count-down cycle)
+	public class AddTimeButtonEvent implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (time >= 96) { // limit time to be less than 100 seconds
+				System.out.println("Cannot exceed 100 seconds");
+			} else {
+				time += 5;
+				label.setText("" + time);
+			}
+		}
+	}
+	
+	// subtract 5 seconds increment to timer for the current count-down cycle (doesn't apply to next count-down cycle)
+	public class SubTimeButtonEvent implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (time <= 14) { // limit time to be not less than 10 seconds
+				System.out.println("Cannot be less than 10 seconds");
+			} else {
+				time -= 5;
+				label.setText("" + time);
+			}
+		}	
+	}
+ }
