@@ -1,21 +1,27 @@
 package trafficlights;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import javax.sound.sampled.*;
 import javax.swing.*;
 
 public class TrafficLight {
+	File file = new File("Button-click-sound.wav");
 	JFrame frame = new JFrame();
 	JButton button = new JButton();
 	JButton addTimeButton = new JButton();
 	JButton subTimeButton = new JButton();
+	JButton tickButton = new JButton();
 	JPanel panel = new JPanel();
 	JLabel label = new JLabel();
-	Timer timer = new Timer(500, new TimerEvent());
+	Timer timer = new Timer(1000, new TimerEvent());
 	Shapes shape = new Shapes();
 	Font font = new Font("Tahoma", Font.BOLD, 70);
 	Font buttonFont = new Font("Tahoma", Font.BOLD, 20);
+	
 	int time = 20;
 	boolean cycle = false;
 	boolean run = false;
@@ -72,7 +78,7 @@ public class TrafficLight {
 		subTimeButton.setForeground(Color.RED);
 		subTimeButton.setBackground(Color.DARK_GRAY);
 		subTimeButton.setHorizontalAlignment(SwingConstants.CENTER);
-		subTimeButton.addActionListener(new SubTimeButtonEvent());	
+		subTimeButton.addActionListener(new SubTimeButtonEvent());
 	}
 	
 	// method for the panel
@@ -89,6 +95,18 @@ public class TrafficLight {
 		label.setForeground(Color.BLACK);
 	}
 	
+	// method to play audio when the color of the light changes
+	public void playAudio() {
+		try {
+			AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
+			Clip clip = AudioSystem.getClip();
+			clip.open(audioStream);
+			clip.start();
+		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
 	// class timer event to simulate the alternating colors of traffic lights depending on the timer
 	public class TimerEvent implements ActionListener {
 		@Override
@@ -101,18 +119,22 @@ public class TrafficLight {
 			label.setText("" + time);
 			if (time == 5 && shape.getColorA() == Color.GREEN) {
 				shape.setColor1(def, ready, def);
+				playAudio();
 			} 
 			if (time == 5 && shape.getColorX() == Color.GREEN) {
 				shape.setColor2(def, ready, def);
+				playAudio();
 			}
 			if (time == 0) {
 				if (cycle) {
 					shape.setColor1(def, def, go);
 					shape.setColor2(stop, def, def);
+					playAudio();
 					cycle = false;
 				} else {
 					shape.setColor1(stop, def, def);
 					shape.setColor2(def, def, go);
+					playAudio();
 					cycle = true;
 				} time = 20;
 			}
@@ -143,7 +165,7 @@ public class TrafficLight {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (time >= 96) { // limit time to be less than 100 seconds
-				System.out.println("Cannot exceed 100 seconds");
+				JOptionPane.showMessageDialog(null, "Cannot exceed 100 seconds", "Warning", JOptionPane.WARNING_MESSAGE);
 			} else {
 				time += 5;
 				label.setText("" + time);
@@ -156,7 +178,7 @@ public class TrafficLight {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (time <= 14) { // limit time to be not less than 10 seconds
-				System.out.println("Cannot be less than 10 seconds");
+				JOptionPane.showMessageDialog(null, "Cannot be less than 10 seconds", "Warning", JOptionPane.WARNING_MESSAGE);
 			} else {
 				time -= 5;
 				label.setText("" + time);
