@@ -9,11 +9,12 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 
 public class TrafficLight {
-	File file = new File("Button-click-sound.wav");
+	File file = new File("res/Button-click-sound.wav");
 	JFrame frame = new JFrame();
 	JButton stopButton = new JButton();
 	JButton addTimeButton = new JButton();
 	JButton subTimeButton = new JButton();
+	JButton helpButton = new JButton();
 	JPanel panel = new JPanel();
 	JLabel timeLabel = new JLabel();
 	Timer timer = new Timer(1000, new TimerEvent());
@@ -43,13 +44,14 @@ public class TrafficLight {
 		frame.add(stopButton);
 		frame.add(addTimeButton);
 		frame.add(subTimeButton);
+		frame.add(helpButton);
 		frame.add(panel);
 		frame.add(timeLabel);
 		frame.add(shape);
 	}
 
 	public void Button() {
-		// stop button properties
+		// button that stops/starts the timer when clicked
 		stopButton.setSize(100,  50);
 		stopButton.setText("STOP");
 		stopButton.setFont(buttonFont);
@@ -57,7 +59,7 @@ public class TrafficLight {
 		stopButton.setForeground(Color.RED);
 		stopButton.setHorizontalAlignment(SwingConstants.CENTER);
 		stopButton.addActionListener(new StopButtonEvent());
-		// add time button properties
+		// button that adds 5 seconds to timer
 		addTimeButton.setSize(50, 25);
 		addTimeButton.setText("+");
 		addTimeButton.setFont(buttonFont);
@@ -66,7 +68,7 @@ public class TrafficLight {
 		addTimeButton.setBackground(Color.DARK_GRAY);
 		addTimeButton.setHorizontalAlignment(SwingConstants.CENTER);
 		addTimeButton.addActionListener(new AddTimeButtonEvent());
-		// subtract time button properties
+		// button that subtracts 5 seconds to timer
 		subTimeButton.setSize(50, 25);
 		subTimeButton.setText("-");
 		subTimeButton.setFont(buttonFont);
@@ -75,6 +77,15 @@ public class TrafficLight {
 		subTimeButton.setBackground(Color.DARK_GRAY);
 		subTimeButton.setHorizontalAlignment(SwingConstants.CENTER);
 		subTimeButton.addActionListener(new SubTimeButtonEvent());
+		// button that shows help dialogue
+		helpButton.setSize(45, 25);
+		helpButton.setText("?");
+		helpButton.setFont(buttonFont);
+		helpButton.setLocation(325, 615);
+		helpButton.setForeground(Color.ORANGE);
+		helpButton.setBackground(Color.DARK_GRAY);
+		helpButton.addActionListener(new HelpButtonEvent());
+		
 	}
 	
 	public void Panel() {
@@ -99,6 +110,7 @@ public class TrafficLight {
 		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
 			e1.printStackTrace();
 		}
+		
 	}
 	
 	// timer event that changes the lights depending on the time left
@@ -178,5 +190,18 @@ public class TrafficLight {
 				timeLabel.setText("" + time);
 			}
 		}	
+	}
+	
+	// shows information about the functions of the button
+	public class HelpButtonEvent implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			timer.stop();
+			int ans = JOptionPane.showConfirmDialog(null, "STOP : Stop the timer\nSTART : Start the timer"
+					+ "\n'+' : Add 5 seconds to timer\n'-' : Subtract 5 seconds to timer", "Help", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
+			if (ans == JOptionPane.OK_OPTION || ans == JOptionPane.DEFAULT_OPTION) {
+				timer.start();
+			}
+		}
 	}
  }
