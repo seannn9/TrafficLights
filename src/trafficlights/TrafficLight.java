@@ -11,22 +11,19 @@ import javax.swing.*;
 public class TrafficLight {
 	File file = new File("Button-click-sound.wav");
 	JFrame frame = new JFrame();
-	JButton button = new JButton();
+	JButton stopButton = new JButton();
 	JButton addTimeButton = new JButton();
 	JButton subTimeButton = new JButton();
-	JButton tickButton = new JButton();
 	JPanel panel = new JPanel();
-	JLabel label = new JLabel();
+	JLabel timeLabel = new JLabel();
 	Timer timer = new Timer(1000, new TimerEvent());
 	Shapes shape = new Shapes();
 	Font font = new Font("Tahoma", Font.BOLD, 70);
 	Font buttonFont = new Font("Tahoma", Font.BOLD, 20);
-	
 	int time = 20;
 	boolean cycle = false;
 	boolean run = false;
 	
-	// constructor that initializes the contents in the main class
 	TrafficLight() {
 		Frame(); 
 		Button();
@@ -35,7 +32,6 @@ public class TrafficLight {
 		timer.start();
 	}
 	
-	// method for the frame or the whole window
 	public void Frame() {
 		frame.setSize(400, 700); // 400, 640
 		frame.setLocation(600, 200);
@@ -44,24 +40,24 @@ public class TrafficLight {
 		frame.setResizable(false);
 		frame.getContentPane().setBackground(Color.BLACK);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(button);
+		frame.add(stopButton);
 		frame.add(addTimeButton);
 		frame.add(subTimeButton);
 		frame.add(panel);
-		frame.add(label);
+		frame.add(timeLabel);
 		frame.add(shape);
 	}
 
-	// method for stop button
 	public void Button() {
-		button.setSize(100,  50);
-		button.setText("STOP");
-		button.setFont(buttonFont);
-		button.setLocation(140, 600);
-		button.setForeground(Color.RED);
-		button.setHorizontalAlignment(SwingConstants.CENTER);
-		button.addActionListener(new StopButtonEvent());
-		// add time button
+		// stop button properties
+		stopButton.setSize(100,  50);
+		stopButton.setText("STOP");
+		stopButton.setFont(buttonFont);
+		stopButton.setLocation(140, 600);
+		stopButton.setForeground(Color.RED);
+		stopButton.setHorizontalAlignment(SwingConstants.CENTER);
+		stopButton.addActionListener(new StopButtonEvent());
+		// add time button properties
 		addTimeButton.setSize(50, 25);
 		addTimeButton.setText("+");
 		addTimeButton.setFont(buttonFont);
@@ -70,7 +66,7 @@ public class TrafficLight {
 		addTimeButton.setBackground(Color.DARK_GRAY);
 		addTimeButton.setHorizontalAlignment(SwingConstants.CENTER);
 		addTimeButton.addActionListener(new AddTimeButtonEvent());
-		// subtract time button
+		// subtract time button properties
 		subTimeButton.setSize(50, 25);
 		subTimeButton.setText("-");
 		subTimeButton.setFont(buttonFont);
@@ -81,21 +77,19 @@ public class TrafficLight {
 		subTimeButton.addActionListener(new SubTimeButtonEvent());
 	}
 	
-	// method for the panel
 	public void Panel() {
 		panel.setBackground(Color.GRAY);
 		panel.setBounds(10,10, 365, 100);
-		panel.add(label);
+		panel.add(timeLabel);
 	}
 	
-	// method for the label that shows the timer
 	public void Label() {
-		label.setText("" + time);
-		label.setFont(font);
-		label.setForeground(Color.BLACK);
+		timeLabel.setText("" + time);
+		timeLabel.setFont(font);
+		timeLabel.setForeground(Color.BLACK);
 	}
 	
-	// method to play audio when the color of the light changes
+	// plays the audio whenever its called
 	public void playAudio() {
 		try {
 			AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
@@ -107,7 +101,7 @@ public class TrafficLight {
 		}
 	}
 	
-	// class timer event to simulate the alternating colors of traffic lights depending on the timer
+	// timer event that changes the lights depending on the time left
 	public class TimerEvent implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -116,10 +110,10 @@ public class TrafficLight {
 			Color stop = Color.RED;
 			Color ready = Color.YELLOW;
 			time--;
-			label.setText("" + time);
+			timeLabel.setText("" + time);
 			if (time == 5 && shape.getColorA() == Color.GREEN) {
 				shape.setColor1(def, ready, def);
-				playAudio();
+				playAudio(); // plays audio (button-click sound) when the colors change
 			} 
 			if (time == 5 && shape.getColorX() == Color.GREEN) {
 				shape.setColor2(def, ready, def);
@@ -142,18 +136,18 @@ public class TrafficLight {
 		}
 	}
 	
-	// class for the button event that stop/start the timer
+	// actions specifically for the stop/start button
 	public class StopButtonEvent implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (run) {
-				button.setText("STOP");
-				button.setForeground(Color.RED);
+				stopButton.setText("STOP");
+				stopButton.setForeground(Color.RED);
 				timer.start();
 				run = false;
 			} else {
-				button.setText("START");
-				button.setForeground(Color.GREEN);
+				stopButton.setText("START");
+				stopButton.setForeground(Color.GREEN);
 				timer.stop();
 				run = true;
 			}
@@ -164,11 +158,11 @@ public class TrafficLight {
 	public class AddTimeButtonEvent implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (time >= 96) { // limit time to be less than 100 seconds
+			if (time >= 96) {
 				JOptionPane.showMessageDialog(null, "Cannot exceed 100 seconds", "Warning", JOptionPane.WARNING_MESSAGE);
 			} else {
 				time += 5;
-				label.setText("" + time);
+				timeLabel.setText("" + time);
 			}
 		}
 	}
@@ -177,11 +171,11 @@ public class TrafficLight {
 	public class SubTimeButtonEvent implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (time <= 14) { // limit time to be not less than 10 seconds
+			if (time <= 14) {
 				JOptionPane.showMessageDialog(null, "Cannot be less than 10 seconds", "Warning", JOptionPane.WARNING_MESSAGE);
 			} else {
 				time -= 5;
-				label.setText("" + time);
+				timeLabel.setText("" + time);
 			}
 		}	
 	}
