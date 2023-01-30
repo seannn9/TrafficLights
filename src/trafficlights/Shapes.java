@@ -7,13 +7,14 @@ import javax.swing.JComponent;
 @SuppressWarnings("serial")
 public class Shapes extends JComponent{
 	// class for the shapes/circles that displays the colors
-		Color A = Color.DARK_GRAY;
-		Color B = Color.DARK_GRAY;
-		Color C = Color.GREEN;
-		Color X = Color.RED;
-		Color Y = Color.DARK_GRAY;
-		Color Z = Color.DARK_GRAY;
-		int h = 150, w = 150;
+		private Color A = Color.DARK_GRAY;
+		private Color B = Color.DARK_GRAY;
+		private Color C = Color.GREEN;
+		private Color X = Color.RED;
+		private Color Y = Color.DARK_GRAY;
+		private Color Z = Color.DARK_GRAY;
+		private int h = 150, w = 150;
+		
 		public void paintComponent(Graphics g) {
 			// Column 1 circles
 			g.setColor(A);
@@ -45,13 +46,29 @@ public class Shapes extends JComponent{
 			this.Z = Z;
 		}
 		
-		// getter for the third circle in column 1
 		public Color getColorA() {
+			return A;
+		}
+		
+		public Color getColorB() {
+			return B;
+		}
+		
+		// getter for the third circle in column 1
+		public Color getColorC() {
 			return C;
 		}
 		
-		// getter for the third circle in column 2
 		public Color getColorX() {
+			return X;
+		}
+		
+		public Color getColorY() {
+			return Y;
+		}
+		
+		// getter for the third circle in column 2
+		public Color getColorZ() {
 			return Z;
 		}
 }

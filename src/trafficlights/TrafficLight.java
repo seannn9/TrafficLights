@@ -9,21 +9,39 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 
 public class TrafficLight {
-	File file = new File("res/Button-click-sound.wav");
+	// JFrame
 	JFrame frame = new JFrame();
+	// JButton
 	JButton stopButton = new JButton();
 	JButton addTimeButton = new JButton();
 	JButton subTimeButton = new JButton();
 	JButton helpButton = new JButton();
+	JButton manualButton = new JButton();
+	JButton redButton = new JButton();
+	JButton yellowButton = new JButton();
+	JButton greenButton = new JButton();
+	JButton northSouthButton = new JButton();
+	JButton eastWestButton = new JButton();
+	// JPanel
 	JPanel panel = new JPanel();
+	// JLabel
 	JLabel timeLabel = new JLabel();
-	Timer timer = new Timer(1000, new TimerEvent());
+	JLabel northSouth = new JLabel();
+	JLabel eastWest = new JLabel();
+	// Other
+	Timer timer = new Timer(500, new TimerEvent());
 	Shapes shape = new Shapes();
 	Font font = new Font("Tahoma", Font.BOLD, 70);
 	Font buttonFont = new Font("Tahoma", Font.BOLD, 20);
+	File file = new File("res/Button-click-sound.wav");
 	int time = 20;
 	boolean cycle = false;
 	boolean run = false;
+	String direction;
+	Color def = Color.DARK_GRAY;
+	Color go = Color.GREEN;
+	Color stop = Color.RED;
+	Color ready = Color.YELLOW;
 	
 	TrafficLight() {
 		Frame(); 
@@ -34,7 +52,7 @@ public class TrafficLight {
 	}
 	
 	public void Frame() {
-		frame.setSize(400, 700); // 400, 640
+		frame.setSize(400, 700);
 		frame.setLocation(600, 200);
 		frame.setTitle("Traffic Light Simulation");
 		frame.setVisible(true);
@@ -45,6 +63,12 @@ public class TrafficLight {
 		frame.add(addTimeButton);
 		frame.add(subTimeButton);
 		frame.add(helpButton);
+		frame.add(manualButton);
+		frame.add(redButton);
+		frame.add(yellowButton);
+		frame.add(greenButton);
+		frame.add(northSouthButton);
+		frame.add(eastWestButton);
 		frame.add(panel);
 		frame.add(timeLabel);
 		frame.add(shape);
@@ -81,11 +105,47 @@ public class TrafficLight {
 		helpButton.setSize(45, 25);
 		helpButton.setText("?");
 		helpButton.setFont(buttonFont);
-		helpButton.setLocation(325, 615);
+		helpButton.setLocation(330, 615);
 		helpButton.setForeground(Color.ORANGE);
 		helpButton.setBackground(Color.DARK_GRAY);
 		helpButton.addActionListener(new HelpButtonEvent());
-		
+		// button to set the colors manually 
+		manualButton.setSize(75, 25);
+		manualButton.setText("Manual");
+		manualButton.setLocation(250, 615);
+		manualButton.setForeground(Color.WHITE);
+		manualButton.setBackground(Color.DARK_GRAY);
+		manualButton.addActionListener(new ManualButtonEvent());
+		// manually set lights to red
+		redButton.setSize(45, 30);
+		redButton.setLocation(120, 700);
+		redButton.setBackground(Color.RED);
+		redButton.setVisible(false);
+		redButton.addActionListener(new ColorButtonEvent());
+		// manually set lights to yellow
+		yellowButton.setSize(45, 30);
+		yellowButton.setLocation(170, 700);
+		yellowButton.setBackground(Color.YELLOW);
+		yellowButton.setVisible(false);
+		yellowButton.addActionListener(new ColorButtonEvent());
+		// manually set lights to green
+		greenButton.setSize(45, 30);
+		greenButton.setLocation(220, 700);
+		greenButton.setBackground(Color.GREEN);
+		greenButton.setVisible(false);
+		greenButton.addActionListener(new ColorButtonEvent());
+		// change colors manually on north-south column
+		northSouthButton.setSize(125, 25);
+		northSouthButton.setLocation(30, 660);
+		northSouthButton.setVisible(false);
+		northSouthButton.setText("North-South");
+		northSouthButton.addActionListener(new DirectionButtonEvent());
+		// change colors manually on east west column
+		eastWestButton.setSize(125, 25);
+		eastWestButton.setLocation(230, 660);
+		eastWestButton.setVisible(false);
+		eastWestButton.setText("East-West");
+		eastWestButton.addActionListener(new DirectionButtonEvent());
 	}
 	
 	public void Panel() {
@@ -110,24 +170,19 @@ public class TrafficLight {
 		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
 			e1.printStackTrace();
 		}
-		
 	}
 	
 	// timer event that changes the lights depending on the time left
 	public class TimerEvent implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Color def = Color.DARK_GRAY;
-			Color go = Color.GREEN;
-			Color stop = Color.RED;
-			Color ready = Color.YELLOW;
 			time--;
 			timeLabel.setText("" + time);
-			if (time == 5 && shape.getColorA() == Color.GREEN) {
+			if (time <= 5 && shape.getColorC() == Color.GREEN) {
 				shape.setColor1(def, ready, def);
 				playAudio(); // plays audio (button-click sound) when the colors change
 			} 
-			if (time == 5 && shape.getColorX() == Color.GREEN) {
+			if (time <= 5 && shape.getColorZ() == Color.GREEN) {
 				shape.setColor2(def, ready, def);
 				playAudio();
 			}
@@ -153,14 +208,14 @@ public class TrafficLight {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (run) {
+				timer.start();
 				stopButton.setText("STOP");
 				stopButton.setForeground(Color.RED);
-				timer.start();
 				run = false;
 			} else {
+				timer.stop();
 				stopButton.setText("START");
 				stopButton.setForeground(Color.GREEN);
-				timer.stop();
 				run = true;
 			}
 		}
@@ -198,10 +253,88 @@ public class TrafficLight {
 		public void actionPerformed(ActionEvent e) {
 			timer.stop();
 			int ans = JOptionPane.showConfirmDialog(null, "STOP : Stop the timer\nSTART : Start the timer"
-					+ "\n'+' : Add 5 seconds to timer\n'-' : Subtract 5 seconds to timer", "Help", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
+					+ "\n'+' : Add 5 seconds to timer\n'-' : Subtract 5 seconds to timer\nManual : Set lights color manually"
+					+ "\n   - North-South : change colors manually (column 1)"
+					+ "\n   - East-West : change colors manually (column 2)"
+					+ "\nAuto : Colors changes automatically (default)", "Help on Buttons", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
 			if (ans == JOptionPane.OK_OPTION || ans == JOptionPane.DEFAULT_OPTION) {
 				timer.start();
 			}
+		}
+	}
+	
+	// change color manually by the user or automatically by default
+	public class ManualButtonEvent implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (run) {
+				manualButton.setText("Manual");
+				timer.start();
+				timeLabel.setVisible(run);
+				stopButton.setEnabled(run);
+				frame.setSize(400, 700);
+				northSouthButton.setVisible(false);
+				eastWestButton.setVisible(false);
+				redButton.setVisible(false);
+				yellowButton.setVisible(false);
+				greenButton.setVisible(false);
+				run = false;
+			} else {
+				manualButton.setText("Auto");
+				timer.stop();
+				timeLabel.setVisible(run);
+				stopButton.setEnabled(run);
+				frame.setSize(400, 780);
+				northSouthButton.setVisible(true);
+				eastWestButton.setVisible(true);
+				redButton.setVisible(true);
+				yellowButton.setVisible(true);
+				greenButton.setVisible(true);
+				redButton.setEnabled(run);
+				yellowButton.setEnabled(run);
+				greenButton.setEnabled(run);
+				run = true;
+			} shape.repaint();
+		}
+	}
+	
+	// determines which direction is manually operated
+	public class DirectionButtonEvent implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			redButton.setEnabled(true);
+			yellowButton.setEnabled(true);
+			greenButton.setEnabled(true);
+			if (e.getSource() == northSouthButton) {
+				direction = "northsouth";
+			} else if (e.getSource() == eastWestButton) {
+				direction = "eastwest";
+			}
+		}
+	}
+	
+	// change color based on what direction was picked and what color is picked
+	public class ColorButtonEvent implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (direction.equals("northsouth")) {
+				if (e.getSource() == redButton) {
+					shape.setColor1(stop, def, def);
+				} else if (e.getSource() == yellowButton) {
+					shape.setColor1(def, ready, def);
+				} else if (e.getSource() == greenButton) {
+					shape.setColor1(def, def, go);
+				}
+			}
+			if (direction.equals("eastwest")) {
+				if (e.getSource() == redButton) {
+					shape.setColor2(stop, def, def);
+				} else if (e.getSource() == yellowButton) {
+					shape.setColor2(def, ready, def);
+				} else if (e.getSource() == greenButton) {
+					shape.setColor2(def, def, go);
+				} 
+			} shape.repaint();
 		}
 	}
  }
