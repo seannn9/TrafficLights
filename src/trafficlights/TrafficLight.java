@@ -28,8 +28,8 @@ public class TrafficLight {
 	JLabel timeLabel = new JLabel();
 	JLabel northSouth = new JLabel();
 	JLabel eastWest = new JLabel();
-	// Other
-	Timer timer = new Timer(500, new TimerEvent());
+	// Others
+	Timer timer = new Timer(1000, new TimerEvent());
 	Shapes shape = new Shapes();
 	Font font = new Font("Tahoma", Font.BOLD, 70);
 	Font buttonFont = new Font("Tahoma", Font.BOLD, 20);
@@ -37,7 +37,7 @@ public class TrafficLight {
 	int time = 20;
 	boolean cycle = false;
 	boolean run = false;
-	String direction;
+	String direction, mode = "Auto";
 	Color def = Color.DARK_GRAY;
 	Color go = Color.GREEN;
 	Color stop = Color.RED;
@@ -64,11 +64,11 @@ public class TrafficLight {
 		frame.add(subTimeButton);
 		frame.add(helpButton);
 		frame.add(manualButton);
+		frame.add(northSouthButton);
+		frame.add(eastWestButton);
 		frame.add(redButton);
 		frame.add(yellowButton);
 		frame.add(greenButton);
-		frame.add(northSouthButton);
-		frame.add(eastWestButton);
 		frame.add(panel);
 		frame.add(timeLabel);
 		frame.add(shape);
@@ -178,11 +178,16 @@ public class TrafficLight {
 		public void actionPerformed(ActionEvent e) {
 			time--;
 			timeLabel.setText("" + time);
+			if (time > 5) {
+				timeLabel.setForeground(Color.BLACK);
+			}
 			if (time <= 5 && shape.getColorC() == Color.GREEN) {
+				timeLabel.setForeground(Color.RED);
 				shape.setColor1(def, ready, def);
 				playAudio(); // plays audio (button-click sound) when the colors change
 			} 
 			if (time <= 5 && shape.getColorZ() == Color.GREEN) {
+				timeLabel.setForeground(Color.RED);
 				shape.setColor2(def, ready, def);
 				playAudio();
 			}
@@ -225,8 +230,8 @@ public class TrafficLight {
 	public class AddTimeButtonEvent implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (time >= 96) {
-				JOptionPane.showMessageDialog(null, "Cannot exceed 100 seconds", "Warning", JOptionPane.WARNING_MESSAGE);
+			if (time >= 196) {
+				JOptionPane.showMessageDialog(null, "Cannot exceed 200 seconds", "Warning", JOptionPane.WARNING_MESSAGE);
 			} else {
 				time += 5;
 				timeLabel.setText("" + time);
@@ -238,8 +243,8 @@ public class TrafficLight {
 	public class SubTimeButtonEvent implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (time <= 14) {
-				JOptionPane.showMessageDialog(null, "Cannot be less than 10 seconds", "Warning", JOptionPane.WARNING_MESSAGE);
+			if (time <= 9) {
+				JOptionPane.showMessageDialog(null, "Cannot be less than 5 seconds", "Warning", JOptionPane.WARNING_MESSAGE);
 			} else {
 				time -= 5;
 				timeLabel.setText("" + time);
@@ -253,12 +258,14 @@ public class TrafficLight {
 		public void actionPerformed(ActionEvent e) {
 			timer.stop();
 			int ans = JOptionPane.showConfirmDialog(null, "STOP : Stop the timer\nSTART : Start the timer"
-					+ "\n'+' : Add 5 seconds to timer\n'-' : Subtract 5 seconds to timer\nManual : Set lights color manually"
-					+ "\n   - North-South : change colors manually (column 1)"
-					+ "\n   - East-West : change colors manually (column 2)"
+					+ "\n'+' : Add 5 seconds to timer\n'-' : Subtract 5 seconds to timer\nManual : Set lights color manually (Pick direction first)"
+					+ "\n   - North-South : change Column1 colors manually"
+					+ "\n   - East-West : change Column2 colors manually"
 					+ "\nAuto : Colors changes automatically (default)", "Help on Buttons", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
 			if (ans == JOptionPane.OK_OPTION || ans == JOptionPane.DEFAULT_OPTION) {
-				timer.start();
+				if (mode.equals("Auto")) {
+					timer.start();
+				} 
 			}
 		}
 	}
@@ -268,7 +275,8 @@ public class TrafficLight {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (run) {
-				manualButton.setText("Manual");
+				manualButton.setText(mode);
+				mode = "Auto";
 				timer.start();
 				timeLabel.setVisible(run);
 				stopButton.setEnabled(run);
@@ -280,7 +288,8 @@ public class TrafficLight {
 				greenButton.setVisible(false);
 				run = false;
 			} else {
-				manualButton.setText("Auto");
+				manualButton.setText(mode);
+				mode = "Manual";
 				timer.stop();
 				timeLabel.setVisible(run);
 				stopButton.setEnabled(run);
