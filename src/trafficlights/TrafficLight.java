@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 import java.io.*;
 import javax.sound.sampled.*;
-import javax.swing.*;
 
 public class TrafficLight {
 	// JFrame
@@ -33,10 +33,11 @@ public class TrafficLight {
 	Shapes shape = new Shapes();
 	Font font = new Font("Tahoma", Font.BOLD, 70);
 	Font buttonFont = new Font("Tahoma", Font.BOLD, 20);
-	File file = new File("res/Button-click-sound.wav");
+	File audioFile = new File("C:\\Users\\naesk\\Documents\\JAVA\\TrafficLights_New\\src\\sound\\click.wav");
+	// Variables
 	int time = 20;
 	boolean cycle = false;
-	boolean run = false;
+	boolean run = false, modeRun = false;
 	String direction, mode = "Auto";
 	Color def = Color.DARK_GRAY;
 	Color go = Color.GREEN;
@@ -96,7 +97,7 @@ public class TrafficLight {
 		subTimeButton.setSize(50, 25);
 		subTimeButton.setText("-");
 		subTimeButton.setFont(buttonFont);
-		subTimeButton.setLocation(70, 615);
+		subTimeButton.setLocation(80, 615);
 		subTimeButton.setForeground(Color.RED);
 		subTimeButton.setBackground(Color.DARK_GRAY);
 		subTimeButton.setHorizontalAlignment(SwingConstants.CENTER);
@@ -160,14 +161,13 @@ public class TrafficLight {
 		timeLabel.setForeground(Color.BLACK);
 	}
 	
-	// plays the audio whenever its called
 	public void playAudio() {
 		try {
-			AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
+			AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
 			Clip clip = AudioSystem.getClip();
 			clip.open(audioStream);
 			clip.start();
-		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
+		} catch(UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
 			e1.printStackTrace();
 		}
 	}
@@ -184,7 +184,7 @@ public class TrafficLight {
 			if (time <= 5 && shape.getColorC() == Color.GREEN) {
 				timeLabel.setForeground(Color.RED);
 				shape.setColor1(def, ready, def);
-				playAudio(); // plays audio (button-click sound) when the colors change
+				playAudio();
 			} 
 			if (time <= 5 && shape.getColorZ() == Color.GREEN) {
 				timeLabel.setForeground(Color.RED);
@@ -195,14 +195,13 @@ public class TrafficLight {
 				if (cycle) {
 					shape.setColor1(def, def, go);
 					shape.setColor2(stop, def, def);
-					playAudio();
 					cycle = false;
 				} else {
 					shape.setColor1(stop, def, def);
 					shape.setColor2(def, def, go);
-					playAudio();
 					cycle = true;
 				} time = 20;
+				playAudio();
 			}
 			shape.repaint();
 		}
@@ -217,7 +216,7 @@ public class TrafficLight {
 				stopButton.setText("STOP");
 				stopButton.setForeground(Color.RED);
 				run = false;
-			} else {
+			}  else {
 				timer.stop();
 				stopButton.setText("START");
 				stopButton.setForeground(Color.GREEN);
@@ -258,7 +257,8 @@ public class TrafficLight {
 		public void actionPerformed(ActionEvent e) {
 			timer.stop();
 			int ans = JOptionPane.showConfirmDialog(null, "STOP : Stop the timer\nSTART : Start the timer"
-					+ "\n'+' : Add 5 seconds to timer\n'-' : Subtract 5 seconds to timer\nManual : Set lights color manually (Pick direction first)"
+					+ "\n'+' : Add 5 seconds to timer\n'-' : Subtract 5 seconds to timer"
+					+ "\nManual : Pick direction first to set colors manually"
 					+ "\n   - North-South : change Column1 colors manually"
 					+ "\n   - East-West : change Column2 colors manually"
 					+ "\nAuto : Colors changes automatically (default)", "Help on Buttons", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
@@ -274,35 +274,44 @@ public class TrafficLight {
 	public class ManualButtonEvent implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (run) {
+			if (modeRun) {
+				timeLabel.setText("" + time);
+				timeLabel.setFont(font);
 				manualButton.setText(mode);
 				mode = "Auto";
+				stopButton.setEnabled(modeRun);
+				stopButton.setText("STOP");
+				stopButton.setForeground(Color.RED);
 				timer.start();
-				timeLabel.setVisible(run);
-				stopButton.setEnabled(run);
 				frame.setSize(400, 700);
 				northSouthButton.setVisible(false);
 				eastWestButton.setVisible(false);
 				redButton.setVisible(false);
 				yellowButton.setVisible(false);
 				greenButton.setVisible(false);
-				run = false;
+				addTimeButton.setEnabled(modeRun);
+				subTimeButton.setEnabled(modeRun);
+				modeRun = false;
 			} else {
+				timeLabel.setText("Manual Mode");
+				timeLabel.setFont(new Font("Tahoma", Font.BOLD, 50));
+				stopButton.setText("STOP");
 				manualButton.setText(mode);
 				mode = "Manual";
 				timer.stop();
-				timeLabel.setVisible(run);
-				stopButton.setEnabled(run);
+				stopButton.setEnabled(modeRun);
 				frame.setSize(400, 780);
 				northSouthButton.setVisible(true);
 				eastWestButton.setVisible(true);
 				redButton.setVisible(true);
 				yellowButton.setVisible(true);
 				greenButton.setVisible(true);
-				redButton.setEnabled(run);
-				yellowButton.setEnabled(run);
-				greenButton.setEnabled(run);
-				run = true;
+				redButton.setEnabled(modeRun);
+				yellowButton.setEnabled(modeRun);
+				greenButton.setEnabled(modeRun);
+				addTimeButton.setEnabled(modeRun);
+				subTimeButton.setEnabled(modeRun);
+				modeRun = true;
 			} shape.repaint();
 		}
 	}

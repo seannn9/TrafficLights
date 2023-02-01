@@ -46,25 +46,9 @@ public class Shapes extends JComponent{
 			this.Z = Z;
 		}
 		
-		public Color getColorA() {
-			return A;
-		}
-		
-		public Color getColorB() {
-			return B;
-		}
-		
 		// getter for the third circle in column 1
 		public Color getColorC() {
 			return C;
-		}
-		
-		public Color getColorX() {
-			return X;
-		}
-		
-		public Color getColorY() {
-			return Y;
 		}
 		
 		// getter for the third circle in column 2
